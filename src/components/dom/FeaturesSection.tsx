@@ -59,56 +59,63 @@ export default function FeaturesSection() {
 
   useEffect(() => {
     if (typeof window === 'undefined') return
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
     const section = sectionRef.current
-    const track   = trackRef.current
+    const track = trackRef.current
     if (!section || !track) return
 
-    const totalWidth = track.scrollWidth
-    const viewWidth  = track.offsetWidth
-    const scrollDist = totalWidth - viewWidth
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-    // Horizontal scroll pinned to vertical scroll
-    const trigger = ScrollTrigger.create({
-      trigger: section,
-      start: 'top top',
-      end: () => `+=${scrollDist + window.innerHeight}`,
-      pin: true,
-      scrub: 1,
-      onUpdate: (self) => {
-        gsap.set(track, { x: -self.progress * scrollDist })
-      },
-    })
+    const ctx = gsap.context(() => {
+      const totalWidth = track.scrollWidth
+      const viewWidth = track.offsetWidth
+      const scrollDist = Math.max(0, totalWidth - viewWidth)
 
-    // Cards stagger in as track scrolls
-    cardsRef.current.forEach((card, i) => {
-      if (!card) return
-      gsap.fromTo(card,
-        { opacity: 0, y: 30, scale: 0.95 },
-        {
-          opacity: 1, y: 0, scale: 1,
-          duration: 0.6,
-          ease: 'power2.out',
-          scrollTrigger: {
-            trigger: section,
-            start: `top+=${i * 80} top`,
-            toggleActions: 'play none none reverse',
-            scrub: false,
-          },
-        }
-      )
-    })
+      if (reduced) {
+        gsap.set(track, { x: 0 })
+        cardsRef.current.forEach((card) => {
+          if (card) gsap.set(card, { opacity: 1, y: 0, scale: 1 })
+        })
+        return
+      }
 
-    return () => {
-      trigger.kill()
-      ScrollTrigger.getAll().forEach(t => t.kill())
-    }
+      ScrollTrigger.create({
+        trigger: section,
+        start: 'top top',
+        end: () => `+=${scrollDist + window.innerHeight}`,
+        pin: true,
+        scrub: 1,
+        onUpdate: (self) => {
+          gsap.set(track, { x: -self.progress * scrollDist })
+        },
+      })
+
+      cardsRef.current.forEach((card, i) => {
+        if (!card) return
+        gsap.fromTo(
+          card,
+          { opacity: 0, y: 30, scale: 0.95 },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.6,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: section,
+              start: `top+=${i * 80} top`,
+              toggleActions: 'play none none reverse',
+            },
+          }
+        )
+      })
+    }, section)
+
+    return () => ctx.revert()
   }, [])
 
   return (
     <section
-      id="carousel-section"
       ref={sectionRef}
       className="relative overflow-hidden"
       style={{ height: '100vh', zIndex: 10 }}

@@ -22,7 +22,7 @@ interface SmartPlayStore {
   triggerGlitch: () => void
 }
 
-export const useStore = create<SmartPlayStore>((set) => ({
+export const useStore = create<SmartPlayStore>()((set) => ({
   mouseX: 0,
   mouseY: 0,
   mouseRawX: 0,

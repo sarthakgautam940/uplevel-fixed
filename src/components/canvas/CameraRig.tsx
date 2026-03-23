@@ -13,7 +13,6 @@ export default function CameraRig() {
   const { mouseX, mouseY, scrollY } = useStore()
 
   const targetPos  = useRef(new THREE.Vector3(0, 0, 5.5))
-  const targetLook = useRef(new THREE.Vector3(0, 0, 0))
   const currentPos = useRef(new THREE.Vector3(0, 0, 5.5))
 
   useFrame(() => {

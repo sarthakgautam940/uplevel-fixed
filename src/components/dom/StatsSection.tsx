@@ -21,10 +21,18 @@ function StatItem({ value, suffix, label, prefix, decimals, index }: typeof STAT
   useEffect(() => {
     if (!numRef.current || !cardRef.current) return
 
+    const el = numRef.current
+    const card = cardRef.current
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      el.textContent = `${prefix}${value.toFixed(decimals)}${suffix}`
+      return
+    }
+
     const obj = { val: 0 }
 
-    ScrollTrigger.create({
-      trigger: cardRef.current,
+    const st = ScrollTrigger.create({
+      trigger: card,
       start: 'top 85%',
       once: true,
       onEnter: () => {
@@ -34,18 +42,14 @@ function StatItem({ value, suffix, label, prefix, decimals, index }: typeof STAT
           delay: index * 0.15,
           ease: 'power2.out',
           onUpdate: () => {
-            if (numRef.current) {
-              numRef.current.textContent = `${prefix}${obj.val.toFixed(decimals)}${suffix}`
-            }
+            el.textContent = `${prefix}${obj.val.toFixed(decimals)}${suffix}`
           },
         })
       },
     })
 
     return () => {
-      ScrollTrigger.getAll().forEach(t => {
-        if (t.vars.trigger === cardRef.current) t.kill()
-      })
+      st.kill()
     }
   }, [value, suffix, prefix, decimals, index])
 
@@ -78,7 +82,7 @@ function StatItem({ value, suffix, label, prefix, decimals, index }: typeof STAT
       </span>
 
       <span
-        className="font-mono text-xs tracking-[0.2em] uppercase"
+        className="font-mono text-[10px] tracking-[0.2em] uppercase"
         style={{ color: '#2a3f52' }}
       >
         {label}
@@ -100,19 +104,28 @@ export default function StatsSection() {
     const el = sectionRef.current
     if (!el) return
 
-    gsap.fromTo(
-      el,
-      { opacity: 0 },
-      {
-        opacity: 1,
-        duration: 0.8,
-        scrollTrigger: {
-          trigger: el,
-          start: 'top 90%',
-          once: true,
-        },
-      }
-    )
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      gsap.set(el, { opacity: 1 })
+      return
+    }
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        el,
+        { opacity: 0 },
+        {
+          opacity: 1,
+          duration: 0.8,
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 90%',
+            once: true,
+          },
+        }
+      )
+    }, el)
+
+    return () => ctx.revert()
   }, [])
 
   return (

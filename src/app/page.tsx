@@ -1,9 +1,7 @@
 import dynamic from 'next/dynamic'
-import Navbar        from '@/components/dom/Navbar'
-import HeroDOM       from '@/components/dom/HeroDOM'
-import StatsSection  from '@/components/dom/StatsSection'
-import FeaturesSection from '@/components/dom/FeaturesSection'
-import FooterReveal  from '@/components/dom/FooterReveal'
+import Navbar       from '@/components/dom/Navbar'
+import HeroDOM      from '@/components/dom/HeroDOM'
+import StatsSection from '@/components/dom/StatsSection'
 
 // Sections with GSAP — SSR disabled to prevent hydration mismatch
 const FeaturesSSR = dynamic(() => import('@/components/dom/FeaturesSection'), { ssr: false })
@@ -21,7 +19,7 @@ export default function HomePage() {
         <StatsSection />
 
         {/* Spacer — carousel section trigger point for WebGL image planes */}
-        <div id="carousel-section" style={{ minHeight: '50vh' }}>
+        <div id="carousel-section" className="relative z-10" style={{ minHeight: '130vh' }}>
           {/* Label overlay for the WebGL carousel */}
           <div
             className="relative z-10 pt-20 px-8 md:px-24 text-center"

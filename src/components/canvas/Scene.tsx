@@ -27,7 +27,7 @@ import CameraRig       from './CameraRig'
 
 // ─── Post-processing pipeline ─────────────────────────────────────────────────
 function Effects() {
-  const { glitchActive, introComplete } = useStore()
+  const { glitchActive } = useStore()
 
   const effects: JSX.Element[] = [
     <Bloom
@@ -60,7 +60,11 @@ function Effects() {
     <Vignette key="vig" eskil={false} offset={0.1} darkness={0.85} />,
   ]
 
-  return <EffectComposer multisampling={2} children={effects} />
+  return (
+    <EffectComposer multisampling={2}>
+      {effects}
+    </EffectComposer>
+  )
 }
 
 // ─── Scene content ────────────────────────────────────────────────────────────

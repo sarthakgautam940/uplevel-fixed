@@ -39,6 +39,11 @@ export default function AnimatedText({
     const el = containerRef.current
     if (!el) return
 
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      el.textContent = text
+      return
+    }
+
     // Split words/chars manually (no SplitText plugin needed)
     const units = splitBy === 'words'
       ? text.split(' ').map(w => ({ text: w + ' ', isWord: true }))

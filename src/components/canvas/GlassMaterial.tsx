@@ -113,7 +113,9 @@ const glassVert = /* glsl */`
     vViewDirection = normalize(camPos - worldPos.xyz);
     vFresnel = pow(1.0 - max(0.0, dot(n, vViewDirection)), 3.0);
 
-    float breathe = smoothNoise(position * 1.5 + vec3(uTime * 0.3)) * 0.04;
+    float breathe =
+      smoothNoise(position * 1.5 + vec3(uTime * 0.3)) * 0.028
+      + smoothNoise(position * 4.2 + vec3(uTime * 0.18)) * 0.012;
     vec2 mi = uMouse * 0.5;
     float md = length(position.xy * 0.5 - mi);
     float mouseWave = sin(md * 8.0 - uTime * 2.0) * 0.02 * uDistortion;

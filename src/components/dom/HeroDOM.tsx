@@ -7,34 +7,10 @@ import AnimatedText from './AnimatedText'
 import { ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 
-// GlitchText — hover reveals chromatic shift via CSS
-function GlitchText({ children, className }: { children: string; className?: string }) {
-  const ref = useRef<HTMLSpanElement>(null)
-
-  const handleEnter = () => {
-    if (!ref.current) return
-    gsap.timeline()
-      .to(ref.current, { skewX: 12, duration: 0.08 })
-      .to(ref.current, { skewX: -8, duration: 0.06 })
-      .to(ref.current, { skewX: 4,  duration: 0.05 })
-      .to(ref.current, { skewX: 0,  duration: 0.1, ease: 'power2.out' })
-  }
-
-  return (
-    <span
-      ref={ref}
-      className={className}
-      onMouseEnter={handleEnter}
-      style={{ display: 'inline-block', cursor: 'default' }}
-    >
-      {children}
-    </span>
-  )
-}
-
 export default function HeroDOM() {
   const containerRef  = useRef<HTMLDivElement>(null)
   const badgeRef      = useRef<HTMLDivElement>(null)
+  const monoRef       = useRef<HTMLParagraphElement>(null)
   const subRef        = useRef<HTMLParagraphElement>(null)
   const ctaRef        = useRef<HTMLDivElement>(null)
   const scrollRef     = useRef<HTMLDivElement>(null)
@@ -53,10 +29,13 @@ export default function HeroDOM() {
       { opacity: 1, y: 0,  filter: 'blur(0px)', duration: 0.7, ease: 'power3.out' }
     )
 
-    // Sub headline
+    .fromTo(monoRef.current,
+      { opacity: 0, y: 20 },
+      { opacity: 1, y: 0, duration: 0.65, ease: 'power3.out' }, '-=0.35'
+    )
     .fromTo(subRef.current,
       { opacity: 0, y: 24 },
-      { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, '-=0.3'
+      { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, '-=0.35'
     )
 
     // CTA buttons
@@ -121,8 +100,8 @@ export default function HeroDOM() {
             className="font-black tracking-tight block"
             style={{ fontSize: 'clamp(52px, 7.5vw, 96px)', lineHeight: 1.05 }}
             delay={0.2}
-            stagger={0.06}
-            trigger="immediate"
+            stagger={0.07}
+            trigger="scroll"
           />
           <div style={{ fontSize: 'clamp(52px, 7.5vw, 96px)', lineHeight: 1.05 }}>
             <AnimatedText
@@ -130,8 +109,8 @@ export default function HeroDOM() {
               as="span"
               className="font-black tracking-tight"
               delay={0.55}
-              stagger={0.06}
-              trigger="immediate"
+              stagger={0.07}
+              trigger="scroll"
             />
             <AnimatedText
               text="Youth Athletes"
@@ -145,14 +124,14 @@ export default function HeroDOM() {
               }}
               delay={0.65}
               stagger={0.07}
-              trigger="immediate"
+              trigger="scroll"
             />
           </div>
         </div>
 
         {/* Monospace sub detail */}
         <p
-          ref={subRef}
+          ref={monoRef}
           className="font-mono text-xs tracking-[0.25em] uppercase mb-4 opacity-0"
           style={{ color: '#2a3f52' }}
         >

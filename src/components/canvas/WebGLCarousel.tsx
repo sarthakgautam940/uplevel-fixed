@@ -6,8 +6,6 @@ import { useTexture } from '@react-three/drei'
 import * as THREE from 'three'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { useStore } from '@/lib/store'
-
 gsap.registerPlugin(ScrollTrigger)
 
 // ─── Ripple shader for image planes ──────────────────────────────────────────
@@ -160,7 +158,6 @@ function useFallbackTextures(count: number): THREE.Texture[] {
 
 export default function WebGLCarousel() {
   const scrollXRef = useRef(0)
-  const { scrollY } = useStore()
   const textures = useFallbackTextures(FEATURE_IMAGES.length)
 
   const SPACING = 3.8

@@ -22,8 +22,15 @@ const jetbrainsMono = JetBrains_Mono({
 const Scene       = dynamic(() => import('@/components/canvas/Scene'),       { ssr: false })
 const EventBridge = dynamic(() => import('@/components/dom/EventBridge'),    { ssr: false })
 const Intro       = dynamic(() => import('@/components/dom/Intro'),          { ssr: false })
+const LenisRoot   = dynamic(() => import('@/components/dom/LenisRoot'),      { ssr: false })
 
 // ─── Metadata ─────────────────────────────────────────────────────────────────
+export const viewport = {
+  themeColor: '#04090f',
+  width: 'device-width' as const,
+  initialScale: 1,
+}
+
 export const metadata: Metadata = {
   title: 'SmartPlay — The Operating System for Youth Athletes',
   description:
@@ -55,6 +62,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
         {/* ── Event bridge: writes mouse + scroll into store ── */}
         <EventBridge />
+
+        {/* ── Lenis smooth scroll (syncs with GSAP ScrollTrigger) ── */}
+        <LenisRoot />
 
         {/* ── Intro overlay ── */}
         <Intro />

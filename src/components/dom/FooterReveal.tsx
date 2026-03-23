@@ -22,6 +22,13 @@ export default function FooterReveal() {
     const bg      = bgRef.current
     if (!section || !text || !mask || !bg) return
 
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      gsap.set(bg, { backgroundColor: 'rgba(0,0,0,1)' })
+      gsap.set(text, { scale: 1, opacity: 1, filter: 'blur(0px)' })
+      gsap.set(mask, { scaleY: 0, transformOrigin: 'top' })
+      return
+    }
+
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: section,
@@ -54,9 +61,7 @@ export default function FooterReveal() {
     )
 
     return () => {
-      ScrollTrigger.getAll().forEach(t => {
-        if (t.vars.trigger === section) t.kill()
-      })
+      tl.kill()
     }
   }, [])
 

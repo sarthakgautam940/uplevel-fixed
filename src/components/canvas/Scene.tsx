@@ -1,83 +1,61 @@
-'use client'
+"use client";
 
-/**
- * Scene — the global R3F <Canvas>. This is dynamically imported in layout.tsx
- * with ssr:false so Three.js never runs server-side.
- *
- * Canvas configuration decisions:
- *  • antialias: false — SMAA in postprocessing handles AA with better quality
- *  • alpha: true — transparent bg so CSS background shows through
- *  • powerPreference: 'high-performance' — request discrete GPU on dual-GPU systems
- *  • stencil: false — not needed, saves memory
- *  • toneMapping: ACESFilmic — industry standard for HDR bloom pipeline
- *  • toneMappingExposure: 1.1 — slightly boosted for neon pop
- *  • dpr: [1, 1.5] — cap at 1.5× for perf; AdaptiveDpr adjusts below under load
- *  • frameloop: 'always' — we drive glass animation every frame
- *
- * Why not gl.outputColorSpace here?
- *  outputColorSpace is set via renderer.outputColorSpace = SRGBColorSpace inside
- *  the gl prop. Three.js 0.169 defaults to SRGB — no explicit set needed.
- *
- * SceneErrorBoundary catches WebGL context loss (GPU crash, mobile browser
- * backgrounding) and renders a silent fallback, preventing a white screen.
- */
+import { Canvas } from '@react-three/fiber';
+import { Environment, PerspectiveCamera } from '@react-three/drei';
+import { EffectComposer, Bloom, ChromaticAberration, Glitch } from '@react-three/postprocessing';
+import { GlitchMode, BlendFunction } from 'postprocessing';
+import { Suspense, useState, useEffect } from 'react';
+import HeroObject from './HeroObject';
 
-import { Suspense } from 'react'
-import { Canvas } from '@react-three/fiber'
-import { AdaptiveDpr, AdaptiveEvents } from '@react-three/drei'
-import * as THREE from 'three'
+function SceneContent() {
+  const [isGlitching, setIsGlitching] = useState(true);
 
-import SceneContent      from './SceneContent'
-import SceneErrorBoundary from './SceneErrorBoundary'
+  useEffect(() => {
+    const timer = setTimeout(() => setIsGlitching(false), 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  return (
+    <>
+      <PerspectiveCamera makeDefault position={[0, 0, 8]} fov={45} />
+      <color attach="background" args={['#05080f'] as any} />
+      <fog attach="fog" args={['#05080f', 5, 20] as any} />
+
+      <ambientLight intensity={0.5} />
+      <directionalLight position={[10, 10, 5]} intensity={2} color="#00ff88" />
+      <directionalLight position={[-10, -10, -5]} intensity={1} color="#00a3ff" />
+
+      <Suspense fallback={null}>
+        <Environment files="/api/hdri/potsdamer_platz_1k.hdr" background={false} environmentIntensity={1} />
+        <HeroObject />
+      </Suspense>
+
+      <EffectComposer enableNormalPass={false}>
+        <Bloom luminanceThreshold={0.2} mipmapBlur intensity={1.5} />
+        <ChromaticAberration
+          blendFunction={BlendFunction.NORMAL}
+          offset={[0.002, 0.002] as any}
+          radialModulation={false}
+          modulationOffset={0}
+        />
+        <Glitch
+          delay={[0.1, 0.5] as any}
+          duration={[0.1, 0.3] as any}
+          strength={[0.2, 0.4] as any}
+          mode={GlitchMode.SPORADIC}
+          active={isGlitching}
+        />
+      </EffectComposer>
+    </>
+  );
+}
 
 export default function Scene() {
   return (
-    <SceneErrorBoundary>
-      <div
-        className="fixed inset-0 z-[-1] w-screen h-screen bg-[#050505] pointer-events-none"
-        style={{ minWidth: '100vw', minHeight: '100vh' }}
-      >
-        <Canvas
-          id="smartplay-canvas"
-          style={{ width: '100%', height: '100%', display: 'block', pointerEvents: 'none' }}
-          camera={{
-            position: [0, 0.3, 5.8],
-            fov:      44,
-            near:     0.1,
-            far:      120,
-          }}
-          gl={{
-            antialias:           false,
-            alpha:               false,
-            powerPreference:     'high-performance',
-            stencil:             false,
-            depth:               true,
-            toneMapping:         THREE.ACESFilmicToneMapping,
-            toneMappingExposure: 1.1,
-          }}
-          shadows={false}
-          dpr={[1, 1.5]}
-          frameloop="always"
-          flat={false}
-        onCreated={({ gl, scene }) => {
-          // Background lives HERE — on the 3D scene, not the DOM.
-          // This ensures the dark bg is always behind the canvas content.
-          scene.background = new THREE.Color('#04090f')
-          gl.setClearAlpha(1)  // fully opaque canvas
-        }}
-      >
-        {/*
-          AdaptiveDpr: automatically lowers pixel ratio when GPU drops below
-          targetFramerate. Keeps the animation smooth on lower-end devices.
-        */}
-        <AdaptiveDpr pixelated />
-        <AdaptiveEvents />
-
-        <Suspense fallback={null}>
-          <SceneContent />
-        </Suspense>
+    <div className="fixed inset-0 z-[-1] w-screen h-screen bg-[#05080f]">
+      <Canvas dpr={[1, 2]}>
+        <SceneContent />
       </Canvas>
-      </div>
-    </SceneErrorBoundary>
-  )
+    </div>
+  );
 }

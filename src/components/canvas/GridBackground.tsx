@@ -26,7 +26,7 @@
 import { useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
-import { useScroll } from '@/lib/store'
+import { eventRefs } from '@/lib/eventRefs'
 
 const GRID_VERT = /* glsl */`
   varying vec3 vWorldPos;
@@ -87,13 +87,11 @@ const GRID_FRAG = /* glsl */`
 
 export default function GridBackground() {
   const matRef = useRef<THREE.ShaderMaterial>(null!)
-  const { y: scrollY } = useScroll()
 
   useFrame(({ clock }) => {
     if (!matRef.current) return
     matRef.current.uniforms.uTime.value = clock.getElapsedTime()
-    // Fade the grid out as user scrolls: gone by scrollY=700
-    matRef.current.uniforms.uFade.value = Math.max(0, 1 - scrollY / 700)
+    matRef.current.uniforms.uFade.value = Math.max(0, 1 - eventRefs.scrollY / 700)
   })
 
   return (

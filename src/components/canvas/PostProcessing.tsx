@@ -20,7 +20,7 @@
  *    so fast scrolls punch up the aberration without triggering full glitch
  */
 
-import { useMemo, type ReactElement } from 'react'
+import { useMemo, useRef, type ReactElement } from 'react'
 import { useFrame } from '@react-three/fiber'
 import {
   EffectComposer,
@@ -33,7 +33,8 @@ import {
 } from '@react-three/postprocessing'
 import { BlendFunction, GlitchMode } from 'postprocessing'
 import { Vector2 } from 'three'
-import { useGlitch, useScroll } from '@/lib/store'
+import { eventRefs } from '@/lib/eventRefs'
+import { useGlitch } from '@/lib/store'
 
 // Stable Vector2 references — avoids re-creating every render
 const CA_OFFSET_IDLE   = new Vector2(0.0014, 0.0008)
@@ -44,16 +45,15 @@ const GLITCH_STRENGTH  = new Vector2(0.15,   0.45)
 
 export default function PostProcessing() {
   const { active: glitchActive, strength: glitchStrength, decay } = useGlitch()
-  const { vel: scrollVel } = useScroll()
 
-  // Decay glitch each frame (exponential falloff drives smooth return)
+  // Decay glitch each frame — updates store but glitch is short-lived
   useFrame(() => {
     if (glitchActive) decay()
   })
 
-  // Compute dynamic CA offset: base + scroll velocity contribution + glitch spike
   const caOffset = useMemo(() => new Vector2(), [])
   useFrame(() => {
+    const scrollVel = eventRefs.scrollVel
     const scrollContrib = Math.min(Math.abs(scrollVel) * 0.0003, 0.006)
     const glitchContrib = glitchStrength * 0.012
     const x = CA_OFFSET_IDLE.x + scrollContrib + glitchContrib

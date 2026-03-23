@@ -19,20 +19,20 @@
 import { useRef } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
-import { useMouse, useScroll } from '@/lib/store'
+import { eventRefs } from '@/lib/eventRefs'
 
-// Starting camera position
 const CAM_ORIGIN = new THREE.Vector3(0, 0.3, 5.8)
 const LOOK_TARGET = new THREE.Vector3()
 
 export default function CameraRig() {
   const { camera } = useThree()
   const currentPos = useRef(CAM_ORIGIN.clone())
-  const { x: mx, y: my } = useMouse()
-  const { y: scrollY }   = useScroll()
 
   useFrame(() => {
-    // Compute target camera position
+    const mx = eventRefs.mouseX
+    const my = eventRefs.mouseY
+    const scrollY = eventRefs.scrollY
+
     const targetX = mx * 0.35
     const targetY = my * 0.20 + 0.3 - scrollY * 0.0010
     const targetZ = 5.8 - scrollY * 0.0013

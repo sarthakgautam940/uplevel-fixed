@@ -30,7 +30,8 @@ import { useFrame } from '@react-three/fiber'
 import { Float } from '@react-three/drei'
 import * as THREE from 'three'
 import { gsap } from 'gsap'
-import { useMouse, useScroll, useIntro } from '@/lib/store'
+import { eventRefs } from '@/lib/eventRefs'
+import { useIntro } from '@/lib/store'
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // GLSL — Simplex Noise (Gustavson, MIT License)
@@ -212,9 +213,7 @@ export default function HeroObject() {
     uMouseXY:  { value: new THREE.Vector2(0, 0) },
   })
 
-  const { x: mx, y: my, vel: mouseVel } = useMouse()
-  const { y: scrollY }                  = useScroll()
-  const { complete }                    = useIntro()
+  const { complete } = useIntro()
 
   const currentRotX = useRef(0)
   const currentRotY = useRef(0)
@@ -256,26 +255,26 @@ export default function HeroObject() {
       .to(groupRef.current.scale, { x: 1,    y: 1,    z: 1,    duration: 0.5,  ease: 'power3.out'   })
   }, [complete])
 
-  // ── Animation loop ────────────────────────────────────────────────────────
+  // ── Animation loop: read from eventRefs (never trigger re-renders) ────────
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime()
+    const mx = eventRefs.mouseX
+    const my = eventRefs.mouseY
+    const mouseVel = eventRefs.mouseVel
+    const scrollY = eventRefs.scrollY
 
-    // Push fresh values into our bound uniforms each frame
     uniforms.current.uTime.value     = t
     uniforms.current.uMouseVel.value = Math.min(mouseVel * 10, 1.0)
     uniforms.current.uMouseXY.value.set(mx, my)
 
     if (!groupRef.current) return
 
-    // Rotational inertia
     currentRotX.current += (my * 0.24  - currentRotX.current) * 0.038
     currentRotY.current += (mx * -0.30 - currentRotY.current) * 0.038
     if (mouseVel < 0.005) idleRotY.current += 0.0015
 
     groupRef.current.rotation.x = currentRotX.current
     groupRef.current.rotation.y = currentRotY.current + idleRotY.current
-
-    // Scroll drift
     groupRef.current.position.y = -scrollY * 0.0028
   })
 

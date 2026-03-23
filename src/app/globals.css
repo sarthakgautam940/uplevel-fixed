@@ -45,7 +45,8 @@
 html {
   -webkit-font-smoothing:  antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* Lenis owns scroll — do NOT set scroll-behavior: smooth here */
+  /* Dark fallback — canvas provides the actual bg; this prevents white flash on load/crash */
+  background:    var(--color-bg);
 }
 
 body {

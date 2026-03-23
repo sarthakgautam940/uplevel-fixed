@@ -1,133 +1,71 @@
 /**
- * page.tsx — Root page shell.
+ * page.tsx — Dark cyber-athletic layout.
  *
- * Architecture: each section is a named slot. Phase 2-5 components drop into
- * these slots without touching the page structure.
- *
- * Section map:
- *  <Navbar />              — Phase 5 (kinetic links, magnetic CTA)
- *  <HeroSection />         — Phase 2/3/5 (3D object + DOM overlay + word reveals)
- *  <StatsSection />        — Phase 5 (counter animation)
- *  <CarouselSection />     — Phase 4 (WebGL planes + DOM label)
- *  <FeaturesSection />     — Phase 5 (pinned horizontal scroll + tilt cards)
- *  <ProblemSection />      — Phase 5 (scroll reveals)
- *  <PricingSection />      — Phase 5 (glass card)
- *  <FooterSection />       — Phase 5 (massive GSAP masked text reveal)
- *
- * Right now each section renders a structural placeholder so the page has
- * correct scroll height for testing PostProcessing and CameraRig scroll math.
+ * Hero: dominated by R3F 3D glass canvas. Minimal DOM overlay.
+ * Sections: dark theme, neon accents, cyber aesthetic.
  */
 
-import dynamic from 'next/dynamic'
 import NavbarShell from '@/components/dom/NavbarShell'
-
-// Phase 5 dynamic imports (uncomment as built):
-// const Navbar          = dynamic(() => import('@/components/dom/Navbar'))
-// const HeroDOM         = dynamic(() => import('@/components/dom/HeroDOM'),         { ssr: false })
-// const StatsSection    = dynamic(() => import('@/components/dom/StatsSection'),    { ssr: false })
-// const FeaturesSection = dynamic(() => import('@/components/dom/FeaturesSection'), { ssr: false })
-// const FooterReveal    = dynamic(() => import('@/components/dom/FooterReveal'),    { ssr: false })
 
 export default function HomePage() {
   return (
     <>
-      {/* ── Navbar placeholder ── */}
       <NavbarShell />
 
       <main>
-        {/* ── HERO ─────────────────────────────────────────────────────── */}
-        {/* Phase 2: <HeroObject /> in canvas + Phase 5: <HeroDOM /> over it */}
         <HeroSection />
-
-        {/* ── STATS STRIP ──────────────────────────────────────────────── */}
         <StatsSection />
-
-        {/* ── CAROUSEL ─────────────────────────────────────────────────── */}
-        {/* Phase 4: WebGL planes scroll-synced via ScrollTrigger */}
         <CarouselSection />
-
-        {/* ── FEATURES ─────────────────────────────────────────────────── */}
-        {/* Phase 5: pinned horizontal + tilt cards */}
         <FeaturesSection />
-
-        {/* ── PROBLEM ──────────────────────────────────────────────────── */}
         <ProblemSection />
-
-        {/* ── PRICING ──────────────────────────────────────────────────── */}
         <PricingSection />
-
-        {/* ── FOOTER ───────────────────────────────────────────────────── */}
-        {/* Phase 5: massive masked SMARTPLAY text reveal */}
         <FooterSection />
       </main>
     </>
   )
 }
 
-// ─── Structural placeholders ──────────────────────────────────────────────────
-// Each has exact dimensions so scroll math works now.
-// Replace with real components in each phase.
-
+// ─── Hero: 3D glass canvas dominates. Minimal text overlay. ────────────────────
 function HeroSection() {
   return (
     <section
       id="hero"
-      className="relative min-h-screen flex items-center justify-center text-center"
-      style={{ zIndex: 10, padding: '160px clamp(24px,6vw,96px) 80px', pointerEvents: 'none' }}
+      className="relative min-h-screen flex flex-col items-center justify-end text-center"
+      style={{
+        zIndex: 10,
+        padding: 'clamp(80px, 12vh, 160px) clamp(24px, 6vw, 96px) clamp(60px, 10vh, 120px)',
+        pointerEvents: 'none',
+        background: 'linear-gradient(to top, rgba(4,9,15,0.92) 0%, transparent 50%)',
+      }}
     >
-      <div style={{ maxWidth: 800, margin: '0 auto', pointerEvents: 'auto' }}>
-        {/* Badge */}
-        <div
-          className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full mb-10 glass-neon"
-          style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#00FF88' }}
-        >
-          <span className="w-1.5 h-1.5 rounded-full animate-pulse-dot" style={{ background: '#00FF88', boxShadow: '0 0 7px #00FF88' }} />
-          Open Beta — 14 Days Free
-        </div>
-
-        {/* Headline — Phase 5 splits these into .word-clip/.word-inner */}
+      {/* Minimal overlay — 3D glass is the hero */}
+      <div style={{ maxWidth: 720, margin: '0 auto', pointerEvents: 'auto' }}>
         <h1
           id="hero-headline"
-          className="text-display mb-5"
-          style={{ fontSize: 'clamp(48px, 7.5vw, 96px)', lineHeight: 1.04 }}
+          className="text-display mb-3"
+          style={{
+            fontSize: 'clamp(36px, 6vw, 72px)',
+            lineHeight: 1.08,
+            color: 'rgba(224,232,240,0.95)',
+            textShadow: '0 0 60px rgba(0,255,136,0.15)',
+          }}
         >
           The Operating System
           <br />
-          for{' '}
-          <span className="text-gradient">Youth Athletes</span>
+          for <span className="text-gradient">Youth Athletes</span>
         </h1>
-
-        {/* Mono tag */}
         <p
-          id="hero-mono"
-          className="text-mono mb-5"
-          style={{ fontSize: 10, letterSpacing: '0.28em', textTransform: 'uppercase', color: '#28394a' }}
+          className="text-mono mb-8"
+          style={{ fontSize: 10, letterSpacing: '0.32em', textTransform: 'uppercase', color: 'rgba(0,255,136,0.7)' }}
         >
           Training · Analytics · Nutrition · Recovery · AI Coaching
         </p>
-
-        {/* Sub */}
-        <p
-          id="hero-sub"
-          style={{ fontSize: 17, color: '#4a6070', maxWidth: 520, margin: '0 auto 48px', lineHeight: 1.65 }}
-        >
-          Six integrated performance modules unified in one platform.
-          Built for soccer. Designed for every athlete.
-        </p>
-
-        {/* CTAs */}
-        <div id="hero-cta" className="flex gap-4 justify-center flex-wrap">
-          <a href="/signup" className="btn-primary">Start Free Trial →</a>
-          <a href="#features" className="btn-secondary">▶&nbsp;&nbsp;See How It Works</a>
-        </div>
+        <a href="/signup" className="btn-primary">Start Free Trial →</a>
       </div>
 
-      {/* Scroll indicator */}
-      <div className="absolute bottom-7 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
-        <span className="text-mono" style={{ fontSize: 9, letterSpacing: '0.25em', textTransform: 'uppercase', color: '#1a2535' }}>Scroll</span>
-        <div className="w-px h-11 relative overflow-hidden" style={{ background: 'linear-gradient(to bottom, #1a2535, transparent)' }}>
-          <div className="absolute inset-x-0 top-0 h-3.5 animate-scroll-line" style={{ background: '#00FF88' }} />
-        </div>
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
+        <span className="text-mono" style={{ fontSize: 9, letterSpacing: '0.28em', textTransform: 'uppercase', color: 'rgba(0,255,136,0.4)' }}>Scroll</span>
+        <div className="w-px h-10" style={{ background: 'linear-gradient(to bottom, rgba(0,255,136,0.5), transparent)' }} />
       </div>
     </section>
   )

@@ -50,7 +50,11 @@ export default function SceneContent() {
         environmentIntensity: low to not overpower the neon lights in Phase 2.
       */}
       <Suspense fallback={null}>
-        <Environment preset="city" background={false} environmentIntensity={1.2} />
+        <Environment
+          files="/api/hdri/potsdamer_platz_1k.hdr"
+          background={false}
+          environmentIntensity={1.2}
+        />
       </Suspense>
 
       {/* ── Phase 2 — LIVE ── */}

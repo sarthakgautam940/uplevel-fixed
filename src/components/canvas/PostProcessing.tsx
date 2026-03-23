@@ -34,7 +34,6 @@ import {
 import { BlendFunction, GlitchMode } from 'postprocessing'
 import { Vector2 } from 'three'
 import { eventRefs } from '@/lib/eventRefs'
-import { useGlitch } from '@/lib/store'
 
 // Stable Vector2 references — avoids re-creating every render
 const CA_OFFSET_IDLE   = new Vector2(0.0014, 0.0008)
@@ -43,19 +42,15 @@ const GLITCH_DELAY     = new Vector2(0,      0)
 const GLITCH_DURATION  = new Vector2(0.18,   0.48)
 const GLITCH_STRENGTH  = new Vector2(0.15,   0.45)
 
+// Glitch: use refs to avoid store-driven re-renders (React #185). Never subscribe.
+const glitchRefs = { active: false, strength: 0 }
+
 export default function PostProcessing() {
-  const { active: glitchActive, strength: glitchStrength, decay } = useGlitch()
-
-  // Decay glitch each frame — updates store but glitch is short-lived
-  useFrame(() => {
-    if (glitchActive) decay()
-  })
-
   const caOffset = useMemo(() => new Vector2(), [])
   useFrame(() => {
     const scrollVel = eventRefs.scrollVel
     const scrollContrib = Math.min(Math.abs(scrollVel) * 0.0003, 0.006)
-    const glitchContrib = glitchStrength * 0.012
+    const glitchContrib = glitchRefs.strength * 0.012
     const x = CA_OFFSET_IDLE.x + scrollContrib + glitchContrib
     const y = CA_OFFSET_IDLE.y + scrollContrib * 0.5 + glitchContrib * 0.5
     caOffset.set(x, y)
@@ -91,7 +86,7 @@ export default function PostProcessing() {
           duration={GLITCH_DURATION}
           strength={GLITCH_STRENGTH}
           mode={GlitchMode.CONSTANT_WILD}
-          active={glitchActive}
+          active={glitchRefs.active}
           ratio={0.82}
         />
       ) as ReactElement}

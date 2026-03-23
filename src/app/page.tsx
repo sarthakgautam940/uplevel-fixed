@@ -328,16 +328,16 @@ function IntroAnimation({ onComplete }: { onComplete: () => void }) {
 function AnimatedWords({ text, className, delay = 0 }: { text: string; className?: string; delay?: number }) {
   const { ref, inView } = useInView(0.2)
   return (
-    <span ref={ref} className={cn('inline-flex flex-wrap', className)}>
+    <span ref={ref} className={cn('flex flex-wrap justify-center gap-x-[0.35em] gap-y-1.5 w-full', className)}>
       {text.split(' ').map((word, i) => (
         <span
           key={i}
-          className="inline-block overflow-hidden mr-[0.3em]"
+          className="inline-block overflow-hidden"
         >
           <span
             className="inline-block transition-all duration-700"
             style={{
-              transform: inView ? 'translateY(0) rotateX(0)' : 'translateY(110%) rotateX(-80deg)',
+              transform: inView ? 'translateY(0) rotateX(0)' : 'translateY(100%) rotateX(-28deg)',
               opacity: inView ? 1 : 0,
               transitionDelay: `${delay + i * 80}ms`,
               transformOrigin: 'bottom center',
@@ -555,18 +555,20 @@ function HeroSection() {
           </div>
         </ScrollReveal>
 
-        {/* Headline — word-by-word 3D reveal */}
-        <h1 className="font-display font-extrabold tracking-tight mb-8" style={{ fontSize: 'clamp(48px, 8vw, 100px)', lineHeight: 1.05 }}>
+        {/* Headline — centered stack; wrapped lines stay visually aligned */}
+        <h1
+          className="font-display font-extrabold tracking-tight mb-8 mx-auto w-full max-w-5xl flex flex-col items-center gap-2 md:gap-3 text-center"
+          style={{ fontSize: 'clamp(40px, 6.5vw, 92px)', lineHeight: 1.08 }}
+        >
           <AnimatedWords text="The Operating System" delay={400} />
-          <br />
-          <span className="inline-flex flex-wrap items-center justify-center">
-            <AnimatedWords text="for " delay={700} />
+          <div className="flex flex-wrap justify-center items-baseline gap-x-[0.35em] gap-y-1 w-full">
+            <AnimatedWords text="for" delay={640} className="!w-auto shrink-0" />
             <span className="overflow-hidden inline-block">
               <span className="inline-block text-gradient" style={{
-                animation: 'fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.9s both',
+                animation: 'fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.85s both',
               }}>Youth Athletes</span>
             </span>
-          </span>
+          </div>
         </h1>
 
         {/* Subheadline */}

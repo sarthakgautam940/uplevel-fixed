@@ -25,7 +25,7 @@ export default function HomePage() {
   )
 }
 
-// ─── Hero: 3D glass canvas dominates. Minimal text overlay. ────────────────────
+// ─── Hero: 3D glass canvas dominates. DOM overlay strictly transparent. ───────
 function HeroSection() {
   return (
     <section
@@ -35,10 +35,10 @@ function HeroSection() {
         zIndex: 10,
         padding: 'clamp(80px, 12vh, 160px) clamp(24px, 6vw, 96px) clamp(60px, 10vh, 120px)',
         pointerEvents: 'none',
-        background: 'linear-gradient(to top, rgba(4,9,15,0.92) 0%, transparent 50%)',
+        background: 'transparent',
       }}
     >
-      {/* Minimal overlay — 3D glass is the hero */}
+      {/* Minimal overlay — 3D glass visible behind. pointer-events: auto for CTAs. */}
       <div style={{ maxWidth: 720, margin: '0 auto', pointerEvents: 'auto' }}>
         <h1
           id="hero-headline"

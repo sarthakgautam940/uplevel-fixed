@@ -61,11 +61,11 @@ body {
 
 /* ─── Layer Architecture ─────────────────────────────────────────────────── */
 
-/* Fixed WebGL canvas — always behind */
+/* Fixed WebGL canvas — behind all DOM, full viewport */
 #smartplay-canvas {
   position:       fixed !important;
   inset:          0 !important;
-  z-index:        var(--z-canvas) !important;
+  z-index:        -1 !important;
   pointer-events: none !important;
   width:          100% !important;
   height:         100% !important;

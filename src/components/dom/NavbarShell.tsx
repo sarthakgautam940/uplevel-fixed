@@ -7,8 +7,7 @@ export default function NavbarShell() {
       style={{
         padding: '22px clamp(24px,6vw,96px)',
         pointerEvents: 'auto',
-        background: 'linear-gradient(to bottom, rgba(4,9,15,0.85), transparent)',
-        backdropFilter: 'blur(8px)',
+        background: 'transparent',
       }}
     >
       <div className="font-black text-[18px] tracking-tight" style={{ color: 'rgba(224,232,240,0.95)' }}>

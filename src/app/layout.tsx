@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Space_Grotesk, JetBrains_Mono } from 'next/font/google'
 import dynamic from 'next/dynamic'
 import './globals.css'
+import SceneErrorBoundary from '@/components/canvas/SceneErrorBoundary'
 
 // ─── Fonts ────────────────────────────────────────────────────────────────────
 const spaceGrotesk = Space_Grotesk({
@@ -31,11 +32,15 @@ export const viewport = {
   initialScale: 1,
 }
 
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://smartplay.io')
+
 export const metadata: Metadata = {
   title: 'SmartPlay — The Operating System for Youth Athletes',
   description:
     'Training analytics, nutrition intelligence, recovery tracking, and AI coaching — unified in one platform. Built for soccer. Designed for every athlete. 14-day free trial.',
-  metadataBase: new URL('https://smartplay.io'),
+  metadataBase: new URL(siteUrl),
   openGraph: {
     title: 'SmartPlay — The OS for Youth Athletes',
     description: 'Track. Train. Transform.',
@@ -58,7 +63,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         style={{ fontFamily: 'var(--font-display)' }}
       >
         {/* ── Layer 0: WebGL Canvas (fixed, pointer-none) ── */}
-        <Scene />
+        <SceneErrorBoundary>
+          <Scene />
+        </SceneErrorBoundary>
 
         {/* ── Event bridge: writes mouse + scroll into store ── */}
         <EventBridge />

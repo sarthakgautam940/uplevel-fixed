@@ -3,7 +3,6 @@
 import { Suspense, useRef } from 'react'
 import { Canvas } from '@react-three/fiber'
 import {
-  Environment,
   AdaptiveDpr,
   AdaptiveEvents,
   PerformanceMonitor,
@@ -72,19 +71,16 @@ function SceneContent() {
   return (
     <>
       {/* Ambient + directional lighting */}
-      <ambientLight intensity={0.15} />
+      <ambientLight intensity={0.28} />
       <directionalLight
         position={[5, 8, 5]}
-        intensity={0.8}
+        intensity={0.95}
         color="#ffffff"
       />
 
-      {/* HDRI environment for cubemap reflections on glass */}
-      <Environment
-        preset="night"
-        backgroundBlurriness={1}
-        backgroundIntensity={0}
-      />
+      {/* No remote HDRI: @react-three/drei presets load from raw.githack.com and often fail
+          behind blockers / flaky CDNs (common cause of Vercel "client-side exception"). */}
+      <hemisphereLight intensity={0.22} color="#1a3a5c" groundColor="#04090f" />
 
       {/* 3D grid floor */}
       <GridBackground />

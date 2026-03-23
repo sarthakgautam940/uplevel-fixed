@@ -9,12 +9,13 @@ function GlitchLink({ href, children }: { href: string; children: string }) {
   const ref = useRef<HTMLAnchorElement>(null)
 
   const handleEnter = () => {
-    if (!ref.current) return
+    const el = ref.current
+    if (!el) return
     const tl = gsap.timeline()
-    tl.to(ref.current, { skewX: 10,  duration: 0.05, ease: 'none' })
-      .to(ref.current, { skewX: -6,  duration: 0.04, ease: 'none' })
-      .to(ref.current, { skewX: 3,   duration: 0.04, ease: 'none' })
-      .to(ref.current, { skewX: 0,   duration: 0.08, ease: 'power2.out' })
+    tl.to(el, { skewX: 10, duration: 0.05, ease: 'none' })
+      .to(el, { skewX: -6, duration: 0.04, ease: 'none' })
+      .to(el, { skewX: 3, duration: 0.04, ease: 'none' })
+      .to(el, { skewX: 0, duration: 0.08, ease: 'power2.out' })
   }
 
   return (
@@ -40,13 +41,15 @@ export default function Navbar() {
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {
-    if (introComplete) {
-      gsap.fromTo(navRef.current,
-        { opacity: 0, y: -20 },
-        { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out', delay: 0.2 }
-      )
-      setVisible(true)
-    }
+    if (!introComplete) return
+    const el = navRef.current
+    if (!el) return
+    gsap.fromTo(
+      el,
+      { opacity: 0, y: -20 },
+      { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out', delay: 0.2 }
+    )
+    setVisible(true)
   }, [introComplete])
 
   const scrolled = scrollY > 40

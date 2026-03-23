@@ -21,36 +21,30 @@ export default function HeroDOM() {
     if (!introComplete) return
     if (!containerRef.current) return
 
+    const badge = badgeRef.current
+    const mono = monoRef.current
+    const sub = subRef.current
+    const cta = ctaRef.current
+    const scroll = scrollRef.current
+    if (!badge || !mono || !sub || !cta || !scroll) return
+
     const tl = gsap.timeline({ delay: 0.15 })
 
-    // Badge slides in
-    tl.fromTo(badgeRef.current,
-      { opacity: 0, y: 20, filter: 'blur(4px)' },
-      { opacity: 1, y: 0,  filter: 'blur(0px)', duration: 0.7, ease: 'power3.out' }
-    )
+    tl.fromTo(badge, { opacity: 0, y: 20, filter: 'blur(4px)' }, {
+      opacity: 1,
+      y: 0,
+      filter: 'blur(0px)',
+      duration: 0.7,
+      ease: 'power3.out',
+    })
+      .fromTo(mono, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.65, ease: 'power3.out' }, '-=0.35')
+      .fromTo(sub, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, '-=0.35')
+      .fromTo(cta, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' }, '-=0.4')
+      .fromTo(scroll, { opacity: 0 }, { opacity: 1, duration: 0.5 }, '-=0.2')
 
-    .fromTo(monoRef.current,
-      { opacity: 0, y: 20 },
-      { opacity: 1, y: 0, duration: 0.65, ease: 'power3.out' }, '-=0.35'
-    )
-    .fromTo(subRef.current,
-      { opacity: 0, y: 24 },
-      { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, '-=0.35'
-    )
-
-    // CTA buttons
-    .fromTo(ctaRef.current,
-      { opacity: 0, y: 20 },
-      { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' }, '-=0.4'
-    )
-
-    // Scroll indicator
-    .fromTo(scrollRef.current,
-      { opacity: 0 },
-      { opacity: 1, duration: 0.5 }, '-=0.2'
-    )
-
-    return () => { tl.kill() }
+    return () => {
+      tl.kill()
+    }
   }, [introComplete])
 
   // Parallax fade on scroll

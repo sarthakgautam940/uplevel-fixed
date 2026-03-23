@@ -24,7 +24,7 @@
 
 import { Suspense } from 'react'
 import { Canvas } from '@react-three/fiber'
-import { AdaptiveDpr, AdaptiveEvents, PerformanceMonitor } from '@react-three/drei'
+import { AdaptiveDpr, AdaptiveEvents } from '@react-three/drei'
 import * as THREE from 'three'
 
 import SceneContent      from './SceneContent'
@@ -71,22 +71,7 @@ export default function Scene() {
           targetFramerate. Keeps the animation smooth on lower-end devices.
         */}
         <AdaptiveDpr pixelated />
-
-        {/*
-          AdaptiveEvents: disables R3F pointer events computation when no 3D
-          objects need them (postprocessing/camera only). Saves CPU.
-        */}
         <AdaptiveEvents />
-
-        {/*
-          PerformanceMonitor: tracks real FPS, triggers AdaptiveDpr thresholds.
-          onDecline → DPR drops. onIncline → DPR recovers.
-        */}
-        <PerformanceMonitor
-          bounds={(refreshrate) => [refreshrate * 0.75, refreshrate * 0.95]}
-          onDecline={() => console.info('[SmartPlay] GPU throttled — DPR reduced')}
-          onIncline={() => console.info('[SmartPlay] GPU recovered — DPR restored')}
-        />
 
         <Suspense fallback={null}>
           <SceneContent />

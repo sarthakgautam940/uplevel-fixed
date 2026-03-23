@@ -30,7 +30,6 @@ export function getLenis() { return lenis }
 
 export default function LenisRoot() {
   useEffect(() => {
-    // Respect prefers-reduced-motion
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (reduced) return
 
@@ -40,18 +39,14 @@ export default function LenisRoot() {
       syncTouch:     false,
       touchMultiplier: 1.8,
       infinite:      false,
-      autoRaf:       false,   // We drive it manually via GSAP ticker
+      autoRaf:       false,
     })
 
-    // ── Sync Lenis → GSAP ticker ──────────────────────────────────────────
-    // GSAP's ticker is frame-synced. Lenis must update in the same frame
-    // so ScrollTrigger reads the correct interpolated scroll position.
-    gsap.ticker.add((time) => {
-      lenis?.raf(time * 1000)
-    })
-    gsap.ticker.lagSmoothing(0)   // disable lag smoothing for accurate times
+    const raf = (time: number) => { lenis?.raf(time * 1000) }
+    gsap.ticker.add(raf)
+    gsap.ticker.lagSmoothing(0)
 
-    // ── Tell ScrollTrigger to use Lenis scroll values ─────────────────────
+    const onRefresh = () => lenis?.resize()
     ScrollTrigger.scrollerProxy(document.body, {
       scrollTop(value) {
         if (arguments.length && lenis) {
@@ -65,14 +60,14 @@ export default function LenisRoot() {
       pinType: document.body.style.transform ? 'transform' : 'fixed',
     })
 
-    ScrollTrigger.addEventListener('refresh', () => lenis?.resize())
+    ScrollTrigger.addEventListener('refresh', onRefresh)
     ScrollTrigger.refresh()
 
     return () => {
       lenis?.destroy()
       lenis = null
-      gsap.ticker.remove(() => {})
-      ScrollTrigger.removeEventListener('refresh', () => {})
+      gsap.ticker.remove(raf)
+      ScrollTrigger.removeEventListener('refresh', onRefresh)
     }
   }, [])
 

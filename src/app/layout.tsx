@@ -40,7 +40,7 @@ const jetbrainsMono = JetBrains_Mono({
 })
 
 // ─── Dynamic imports (client-only) ────────────────────────────────────────────
-const Scene       = dynamic(() => import('@/components/canvas/Scene'),    { ssr: false })
+const Scene = dynamic(() => import('@/components/canvas/Scene'), { ssr: false })
 const EventBridge = dynamic(() => import('@/components/dom/EventBridge'), { ssr: false })
 const LenisRoot   = dynamic(() => import('@/components/dom/LenisRoot'),   { ssr: false })
 // Phase 3 — Intro added here:
@@ -139,7 +139,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         ══════════════════════════════════════════ */}
         <div
           id="dom-root"
-          className="relative z-10 bg-transparent pointer-events-none"
+          className="relative z-10 bg-transparent"
           style={{ background: 'transparent' }}
         >
           {children}

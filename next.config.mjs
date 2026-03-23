@@ -1,13 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  reactStrictMode: true,
   images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "palmettopoolsinc.com",
-      },
-    ],
+    remotePatterns: [{ protocol: 'https', hostname: '**' }],
   },
-};
+  transpilePackages: ['three', 'gsap'],
+}
 
-export default nextConfig;
+export default nextConfig

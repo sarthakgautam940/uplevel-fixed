@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00E676"/>
+      <stop offset="100%" stop-color="#0A84FF"/>
+    </linearGradient>
+    <linearGradient id="g2" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00E676"/>
+      <stop offset="50%" stop-color="#0A84FF"/>
+      <stop offset="100%" stop-color="#00E676"/>
+    </linearGradient>
+  </defs>
+  <!-- Outer rounded square container -->
+  <rect x="4" y="4" width="56" height="56" rx="14" fill="#060B14" stroke="url(#g2)" stroke-width="1.5"/>
+  <!-- Play triangle - the core mark -->
+  <path d="M24 18L48 32L24 46V18Z" fill="url(#g1)" opacity="0.95"/>
+  <!-- Data node dots representing connected analytics -->
+  <circle cx="24" cy="18" r="3" fill="#00E676"/>
+  <circle cx="48" cy="32" r="3" fill="#0A84FF"/>
+  <circle cx="24" cy="46" r="3" fill="#00E676"/>
+  <!-- Pulse ring on the forward point -->
+  <circle cx="48" cy="32" r="6" fill="none" stroke="#0A84FF" stroke-width="0.8" opacity="0.4"/>
+  <circle cx="48" cy="32" r="10" fill="none" stroke="#0A84FF" stroke-width="0.4" opacity="0.15"/>
+</svg>

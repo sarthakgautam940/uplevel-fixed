@@ -1,141 +1,98 @@
 'use client'
 
-import { Suspense, useRef } from 'react'
+/**
+ * Scene — the global R3F <Canvas>. This is dynamically imported in layout.tsx
+ * with ssr:false so Three.js never runs server-side.
+ *
+ * Canvas configuration decisions:
+ *  • antialias: false — SMAA in postprocessing handles AA with better quality
+ *  • alpha: true — transparent bg so CSS background shows through
+ *  • powerPreference: 'high-performance' — request discrete GPU on dual-GPU systems
+ *  • stencil: false — not needed, saves memory
+ *  • toneMapping: ACESFilmic — industry standard for HDR bloom pipeline
+ *  • toneMappingExposure: 1.1 — slightly boosted for neon pop
+ *  • dpr: [1, 1.5] — cap at 1.5× for perf; AdaptiveDpr adjusts below under load
+ *  • frameloop: 'always' — we drive glass animation every frame
+ *
+ * Why not gl.outputColorSpace here?
+ *  outputColorSpace is set via renderer.outputColorSpace = SRGBColorSpace inside
+ *  the gl prop. Three.js 0.169 defaults to SRGB — no explicit set needed.
+ *
+ * SceneErrorBoundary catches WebGL context loss (GPU crash, mobile browser
+ * backgrounding) and renders a silent fallback, preventing a white screen.
+ */
+
+import { Suspense } from 'react'
 import { Canvas } from '@react-three/fiber'
-import {
-  AdaptiveDpr,
-  AdaptiveEvents,
-  PerformanceMonitor,
-} from '@react-three/drei'
-import {
-  EffectComposer,
-  Bloom,
-  ChromaticAberration,
-  Glitch,
-  Noise,
-  Vignette,
-} from '@react-three/postprocessing'
-import { GlitchMode } from 'postprocessing'
-import { Vector2 } from 'three'
-import { useStore } from '@/lib/store'
+import { AdaptiveDpr, AdaptiveEvents, PerformanceMonitor } from '@react-three/drei'
+import * as THREE from 'three'
 
-import HeroObject      from './HeroObject'
-import GridBackground  from './GridBackground'
-import WebGLCarousel   from './WebGLCarousel'
-import CameraRig       from './CameraRig'
+import SceneContent      from './SceneContent'
+import SceneErrorBoundary from './SceneErrorBoundary'
 
-// ─── Post-processing pipeline ─────────────────────────────────────────────────
-function Effects() {
-  const { glitchActive } = useStore()
-
-  const effects: JSX.Element[] = [
-    <Bloom
-      key="bloom"
-      luminanceThreshold={0.55}
-      luminanceSmoothing={0.9}
-      intensity={1.2}
-      mipmapBlur
-      radius={0.8}
-    />,
-    <ChromaticAberration
-      key="ca"
-      radialModulation={false}
-      modulationOffset={0}
-      offset={new Vector2(
-        glitchActive ? 0.008 : 0.0012,
-        glitchActive ? 0.004 : 0.0006
-      )}
-    />,
-    <Glitch
-      key="glitch"
-      delay={new Vector2(0, 0)}
-      duration={new Vector2(0.15, 0.4)}
-      strength={new Vector2(0.15, 0.4)}
-      mode={GlitchMode.CONSTANT_WILD}
-      active={glitchActive}
-      ratio={0.85}
-    />,
-    <Noise key="noise" opacity={0.025} />,
-    <Vignette key="vig" eskil={false} offset={0.1} darkness={0.85} />,
-  ]
-
-  return (
-    <EffectComposer multisampling={2}>
-      {effects}
-    </EffectComposer>
-  )
-}
-
-// ─── Scene content ────────────────────────────────────────────────────────────
-function SceneContent() {
-  return (
-    <>
-      {/* Ambient + directional lighting */}
-      <ambientLight intensity={0.28} />
-      <directionalLight
-        position={[5, 8, 5]}
-        intensity={0.95}
-        color="#ffffff"
-      />
-
-      {/* No remote HDRI: @react-three/drei presets load from raw.githack.com and often fail
-          behind blockers / flaky CDNs (common cause of Vercel "client-side exception"). */}
-      <hemisphereLight intensity={0.22} color="#1a3a5c" groundColor="#04090f" />
-
-      {/* 3D grid floor */}
-      <GridBackground />
-
-      {/* Hero glass object */}
-      <HeroObject />
-
-      {/* WebGL image carousel */}
-      <WebGLCarousel />
-
-      {/* Post-processing */}
-      <Effects />
-
-      {/* Camera controller */}
-      <CameraRig />
-    </>
-  )
-}
-
-// ─── Root Scene (exported — dynamically imported in layout) ──────────────────
 export default function Scene() {
   return (
-    <Canvas
-      camera={{ position: [0, 0.3, 5.5], fov: 45, near: 0.1, far: 100 }}
-      gl={{
-        antialias:      false,   // postprocessing handles AA
-        alpha:          true,
-        powerPreference: 'high-performance',
-        stencil:        false,
-        depth:          true,
-        toneMapping:    3,       // THREE.ACESFilmicToneMapping
-        toneMappingExposure: 1.2,
-      }}
-      shadows={false}
-      dpr={[1, 1.5]}             // cap at 1.5 for performance
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        zIndex: 0,
-        pointerEvents: 'none',   // DOM sits on top, handles events
-      }}
-    >
-      {/* Performance adaptive DPR */}
-      <AdaptiveDpr pixelated />
-      <AdaptiveEvents />
-      <PerformanceMonitor
-        onDecline={() => console.log('[SmartPlay] GPU throttled — reducing DPR')}
-      />
+    <SceneErrorBoundary>
+      <Canvas
+        id="smartplay-canvas"
+        camera={{
+          position: [0, 0.3, 5.8],
+          fov:      44,
+          near:     0.1,
+          far:      120,
+        }}
+        gl={{
+          antialias:           false,
+          alpha:               true,
+          powerPreference:     'high-performance',
+          stencil:             false,
+          depth:               true,
+          toneMapping:         THREE.ACESFilmicToneMapping,
+          toneMappingExposure: 1.1,
+        }}
+        shadows={false}
+        dpr={[1, 1.5]}
+        frameloop="always"
+        flat={false}
+        style={{
+          position:       'fixed',
+          inset:          0,
+          zIndex:         0,
+          pointerEvents:  'none',
+          width:          '100%',
+          height:         '100%',
+        }}
+        onCreated={({ gl }) => {
+          // Ensure clean state on context creation
+          gl.setClearAlpha(0)
+        }}
+      >
+        {/*
+          AdaptiveDpr: automatically lowers pixel ratio when GPU drops below
+          targetFramerate. Keeps the animation smooth on lower-end devices.
+        */}
+        <AdaptiveDpr pixelated />
 
-      <Suspense fallback={null}>
-        <SceneContent />
-      </Suspense>
-    </Canvas>
+        {/*
+          AdaptiveEvents: disables R3F pointer events computation when no 3D
+          objects need them (postprocessing/camera only). Saves CPU.
+        */}
+        <AdaptiveEvents />
+
+        {/*
+          PerformanceMonitor: tracks real FPS, triggers AdaptiveDpr thresholds.
+          onDecline → DPR drops. onIncline → DPR recovers.
+        */}
+        <PerformanceMonitor
+          bounds={(refreshrate) => [refreshrate * 0.75, refreshrate * 0.95]}
+          onDecline={() => console.info('[SmartPlay] GPU throttled — DPR reduced')}
+          onIncline={() => console.info('[SmartPlay] GPU recovered — DPR restored')}
+        />
+
+        <Suspense fallback={null}>
+          <SceneContent />
+        </Suspense>
+      </Canvas>
+    </SceneErrorBoundary>
   )
 }

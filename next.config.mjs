@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  reactStrictMode: true,
+
   transpilePackages: [
     'three',
     '@react-three/fiber',
@@ -8,7 +10,7 @@ const nextConfig = {
     'postprocessing',
   ],
 
-  webpack: (config) => {
+  webpack(config) {
     config.module.rules.push({
       test: /\.(glsl|vert|frag)$/,
       type: 'asset/source',
@@ -16,11 +18,8 @@ const nextConfig = {
     return config
   },
 
-  reactStrictMode: true,
-
   images: {
     formats: ['image/avif', 'image/webp'],
-    remotePatterns: [],
   },
 
   async headers() {
@@ -30,10 +29,7 @@ const nextConfig = {
         headers: [
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           { key: 'X-Frame-Options', value: 'DENY' },
-          {
-            key: 'Permissions-Policy',
-            value: 'camera=(), microphone=(), geolocation=()',
-          },
+          { key: 'Permissions-Policy', value: 'camera=(), microphone=()' },
         ],
       },
     ]

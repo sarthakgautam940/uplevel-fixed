@@ -1,27 +1,34 @@
 'use client'
 
-import { Component, type ErrorInfo, type ReactNode } from 'react'
+import { Component, type ReactNode } from 'react'
 
-type Props = { children: ReactNode }
-
-type State = { hasError: boolean }
+interface Props { children: ReactNode }
+interface State { hasError: boolean; error?: Error }
 
 /**
- * Prevents a WebGL / drei / postprocessing failure from taking down the whole app on Vercel.
+ * SceneErrorBoundary — catches WebGL context loss and Three.js runtime errors
+ * without crashing the entire page. Renders nothing (canvas disappears silently)
+ * so the DOM overlay remains functional even if 3D fails.
+ *
+ * Common triggers:
+ *  • GPU driver crash
+ *  • Mobile browser backgrounded for >30s
+ *  • Hardware acceleration disabled in browser settings
+ *  • Memory exhaustion on low-end devices
  */
 export default class SceneErrorBoundary extends Component<Props, State> {
-  state: State = { hasError: false }
-
-  static getDerivedStateFromError(): State {
-    return { hasError: true }
+  constructor(props: Props) {
+    super(props)
+    this.state = { hasError: false }
   }
 
-  componentDidCatch(error: Error, info: ErrorInfo) {
-    if (process.env.NODE_ENV === 'development') {
-      console.error('[SceneErrorBoundary]', error, info.componentStack)
-    } else {
-      console.error('[SceneErrorBoundary]', error.message)
-    }
+  static getDerivedStateFromError(error: Error): State {
+    console.error('[SmartPlay] WebGL error:', error)
+    return { hasError: true, error }
+  }
+
+  componentDidCatch(error: Error) {
+    console.error('[SmartPlay] Scene crashed:', error.message)
   }
 
   render() {

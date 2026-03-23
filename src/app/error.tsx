@@ -15,12 +15,11 @@ export default function Error({
 
   return (
     <div
-      className="min-h-[50vh] flex flex-col items-center justify-center gap-6 px-8"
+      className="min-h-[40vh] flex flex-col items-center justify-center gap-6 px-8"
       style={{ background: '#04090f', color: '#e0e8f0' }}
     >
       <p className="font-mono text-sm text-center max-w-md" style={{ color: '#6a7e8e' }}>
-        Something went wrong loading this page. You can retry — the 3D layer may stay disabled if your
-        browser blocks WebGL.
+        Something went wrong. You can try again.
       </p>
       <button
         type="button"

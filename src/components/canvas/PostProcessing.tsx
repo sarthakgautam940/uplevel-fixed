@@ -20,7 +20,7 @@
  *    so fast scrolls punch up the aberration without triggering full glitch
  */
 
-import { useMemo } from 'react'
+import { useMemo, type ReactElement } from 'react'
 import { useFrame } from '@react-three/fiber'
 import {
   EffectComposer,
@@ -62,11 +62,7 @@ export default function PostProcessing() {
   })
 
   return (
-    <EffectComposer
-      multisampling={0}         // SMAA handles AA — MSAA breaks postprocessing
-      disableNormalPass          // no depth/normal buffers needed in Phase 1
-      renderPriority={1}
-    >
+    <EffectComposer multisampling={0} renderPriority={1}>
       {/* ① Anti-aliasing — temporal SMAA, best quality for dark scenes */}
       <SMAA />
 
@@ -89,15 +85,16 @@ export default function PostProcessing() {
         blendFunction={BlendFunction.NORMAL}
       />
 
-      {/* ④ Glitch — fires on intro transition (Phase 3); otherwise silent */}
-      <Glitch
-        delay={GLITCH_DELAY}
-        duration={GLITCH_DURATION}
-        strength={GLITCH_STRENGTH}
-        mode={GlitchMode.CONSTANT_WILD}
-        active={glitchActive}
-        ratio={0.82}
-      />
+      {(
+        <Glitch
+          delay={GLITCH_DELAY}
+          duration={GLITCH_DURATION}
+          strength={GLITCH_STRENGTH}
+          mode={GlitchMode.CONSTANT_WILD}
+          active={glitchActive}
+          ratio={0.82}
+        />
+      ) as ReactElement}
 
       {/* ⑤ Film Grain — subtle, high-frequency texture, makes dark scenes feel
                organic instead of flat/digital */}

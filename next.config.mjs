@@ -1,9 +1,7 @@
-import type { NextConfig } from 'next'
-
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   reactStrictMode: true,
 
-  // Transpile Three.js ESM packages — required for Next.js 14
   transpilePackages: [
     'three',
     '@react-three/fiber',
@@ -12,7 +10,6 @@ const nextConfig: NextConfig = {
     'postprocessing',
   ],
 
-  // Raw GLSL/FRAG/VERT shader imports
   webpack(config) {
     config.module.rules.push({
       test: /\.(glsl|vert|frag)$/,
@@ -31,8 +28,8 @@ const nextConfig: NextConfig = {
         source: '/(.*)',
         headers: [
           { key: 'X-Content-Type-Options', value: 'nosniff' },
-          { key: 'X-Frame-Options',        value: 'DENY' },
-          { key: 'Permissions-Policy',     value: 'camera=(), microphone=()' },
+          { key: 'X-Frame-Options', value: 'DENY' },
+          { key: 'Permissions-Policy', value: 'camera=(), microphone=()' },
         ],
       },
     ]

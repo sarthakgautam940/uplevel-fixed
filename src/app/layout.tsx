@@ -25,7 +25,7 @@ import './globals.css'
 // ─── Fonts (next/font — zero layout shift, preloaded, no @import) ─────────────
 const spaceGrotesk = Space_Grotesk({
   subsets:  ['latin'],
-  weight:   ['400', '500', '600', '700', '800'],
+  weight:   ['400', '500', '600', '700'],
   variable: '--font-display',
   display:  'swap',
   preload:  true,

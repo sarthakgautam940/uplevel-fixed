@@ -139,12 +139,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         ══════════════════════════════════════════ */}
         <div
           id="dom-root"
-          style={{
-            position:       'relative',
-            zIndex:         10,
-            pointerEvents:  'none',      // pass mouse through to canvas
-            background:     'transparent',
-          }}
+          className="relative z-10 bg-transparent pointer-events-none"
+          style={{ background: 'transparent' }}
         >
           {children}
         </div>

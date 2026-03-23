@@ -25,34 +25,14 @@ import GridBackground from './GridBackground'
 // ── Phase 4 ──────────────────────────────────────────────────────────────────
 // import WebGLCarousel from './WebGLCarousel'
 
-// ─── Lighting rig ─────────────────────────────────────────────────────────────
+// ─── Lighting — REQUIRED for transmission glass to be visible ─────────────────
 function Lighting() {
   return (
     <>
-      {/*
-        Ambient: low intensity so glass doesn't flatten — let the env map drive
-        the interesting refracted colors instead.
-      */}
-      <ambientLight intensity={0.25} color="#0a1220" />
-
-      {/*
-        Key light: positioned to catch the glass edges and create strong Fresnel
-        rim. Phase 2 orbiting point lights supplement this.
-      */}
-      <directionalLight
-        position={[4, 8, 5]}
-        intensity={1.4}
-        color="#ffffff"
-      />
-
-      {/*
-        Fill light: warm underside so the dark bg doesn't kill glass depth.
-      */}
-      <directionalLight
-        position={[-3, -4, -5]}
-        intensity={0.35}
-        color="#0a0828"
-      />
+      <ambientLight intensity={2} />
+      <directionalLight position={[5, 5, 5]} intensity={3} />
+      <pointLight position={[-4, 4, 4]} color="#00FF88" intensity={8} />
+      <pointLight position={[4, -2, 4]} color="#00A3FF" intensity={6} />
     </>
   )
 }
@@ -70,11 +50,7 @@ export default function SceneContent() {
         environmentIntensity: low to not overpower the neon lights in Phase 2.
       */}
       <Suspense fallback={null}>
-        <Environment
-          preset="city"
-          background={false}
-          environmentIntensity={0.55}
-        />
+        <Environment preset="city" background={false} environmentIntensity={1.2} />
       </Suspense>
 
       {/* ── Phase 2 — LIVE ── */}

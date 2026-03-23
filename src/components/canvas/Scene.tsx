@@ -33,35 +33,32 @@ import SceneErrorBoundary from './SceneErrorBoundary'
 export default function Scene() {
   return (
     <SceneErrorBoundary>
-      <Canvas
-        id="smartplay-canvas"
-        camera={{
-          position: [0, 0.3, 5.8],
-          fov:      44,
-          near:     0.1,
-          far:      120,
-        }}
-        gl={{
-          antialias:           false,
-          alpha:               false,   // scene.background provides the dark bg
-          powerPreference:     'high-performance',
-          stencil:             false,
-          depth:               true,
-          toneMapping:         THREE.ACESFilmicToneMapping,
-          toneMappingExposure: 1.1,
-        }}
-        shadows={false}
-        dpr={[1, 1.5]}
-        frameloop="always"
-        flat={false}
-        style={{
-          position:       'fixed',
-          inset:          0,
-          zIndex:         -1,
-          pointerEvents:  'none',
-          width:          '100%',
-          height:         '100%',
-        }}
+      <div
+        className="fixed inset-0 z-[-1] w-screen h-screen bg-[#050505] pointer-events-none"
+        style={{ minWidth: '100vw', minHeight: '100vh' }}
+      >
+        <Canvas
+          id="smartplay-canvas"
+          style={{ width: '100%', height: '100%', display: 'block', pointerEvents: 'none' }}
+          camera={{
+            position: [0, 0.3, 5.8],
+            fov:      44,
+            near:     0.1,
+            far:      120,
+          }}
+          gl={{
+            antialias:           false,
+            alpha:               false,
+            powerPreference:     'high-performance',
+            stencil:             false,
+            depth:               true,
+            toneMapping:         THREE.ACESFilmicToneMapping,
+            toneMappingExposure: 1.1,
+          }}
+          shadows={false}
+          dpr={[1, 1.5]}
+          frameloop="always"
+          flat={false}
         onCreated={({ gl, scene }) => {
           // Background lives HERE — on the 3D scene, not the DOM.
           // This ensures the dark bg is always behind the canvas content.
@@ -95,6 +92,7 @@ export default function Scene() {
           <SceneContent />
         </Suspense>
       </Canvas>
+      </div>
     </SceneErrorBoundary>
   )
 }

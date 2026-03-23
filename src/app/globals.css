@@ -43,32 +43,26 @@
 }
 
 html {
-  -webkit-font-smoothing:  antialiased;
+  -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* Dark fallback — canvas provides the actual bg; this prevents white flash on load/crash */
-  background:    var(--color-bg);
+  background: transparent;
 }
 
 body {
-  /* TRANSPARENT — the WebGL canvas provides the dark background.
-     Any background color here stacks above the fixed canvas (z:0)
-     and hides the 3D scene. Color/font only, no background. */
-  color:         var(--color-text);
-  font-family:   var(--font-display);
-  overflow-x:    hidden;
-  min-height:    100vh;
+  color: var(--color-text);
+  font-family: var(--font-display);
+  overflow-x: hidden;
+  min-height: 100vh;
+  background: transparent;
 }
 
 /* ─── Layer Architecture ─────────────────────────────────────────────────── */
 
-/* Fixed WebGL canvas — behind all DOM, full viewport */
+/* Canvas sizing — wrapper handles position, canvas fills it */
 #smartplay-canvas {
-  position:       fixed !important;
-  inset:          0 !important;
-  z-index:        -1 !important;
-  pointer-events: none !important;
-  width:          100% !important;
-  height:         100% !important;
+  width:  100% !important;
+  height: 100% !important;
+  display: block !important;
 }
 
 /* DOM content sits above canvas */

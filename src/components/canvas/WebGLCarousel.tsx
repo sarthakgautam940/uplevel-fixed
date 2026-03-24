@@ -247,7 +247,7 @@ function Card({
       <shaderMaterial
         vertexShader={VERT}
         fragmentShader={FRAG}
-        uniforms={uniforms}
+        uniforms={uniforms as unknown as Record<string, THREE.IUniform>}
         transparent
         depthWrite={false}
         side={THREE.DoubleSide}

@@ -36,7 +36,7 @@ function DynamicEffects() {
   })
 
   return (
-    <EffectComposer disableNormalPass>
+    <EffectComposer enableNormalPass={false}>
       <Bloom
         luminanceThreshold={0.2}
         luminanceSmoothing={0.9}

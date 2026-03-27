@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --void: #06080f;
+  --crisp: #edf0f7;
+  --electric: #2461e8;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--void);
+  color: var(--crisp);
+  font-family: var(--font-body), Inter, system-ui, -apple-system, sans-serif;
+  cursor: none;
+  overflow-x: clip;
+  text-rendering: geometricPrecision;
+}
+
+a,
+button,
+[data-magnetic='true'] {
+  cursor: none;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--electric) 45%, transparent);
+  color: var(--crisp);
+}
+
+.display-serif {
+  font-family: var(--font-display), Playfair Display, Georgia, serif;
+  letter-spacing: -0.03em;
+  line-height: 0.94;
+}
+
+.noise-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.03;
+  z-index: 50;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220' viewBox='0 0 220 220'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.68' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+}
+
+.section-shell {
+  @apply mx-auto w-full max-w-[1440px] px-6 md:px-10;
+}

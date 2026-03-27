@@ -16,7 +16,6 @@ export default function SmoothScroll({ children }: SmoothScrollProps) {
     const lenis = new Lenis({
       duration: 1.12,
       smoothWheel: true,
-      smoothTouch: false,
     });
 
     lenis.on('scroll', ScrollTrigger.update);
